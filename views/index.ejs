@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+      integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+      crossorigin="anonymous"
+    ></script>
+    <title>Tasker</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <section class="container">
+      <div class="header">
+        <div class="container">
+          <nav
+            class="navbar navbar-light"
+            style="background-color: #e3f2fd; margin-top: 5px"
+          >
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#"><strong>Tasker</strong></a>
+              <div
+                class="btn-group"
+                role="group"
+                aria-label="Basic outlined example"
+              >
+                <a href="/signin"
+                  ><button
+                    type="button"
+                    id="loggedin"
+                    class="btn btn-outline-primary"
+                  >
+                    <%=name%>
+                  </button></a
+                >
+                <a href="/logout"
+                  ><button
+                    disabled
+                    type="button"
+                    id="logout"
+                    class="btn btn-outline-primary"
+                  >
+                    Logout
+                  </button></a
+                >
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <div class="assign-task">
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <button id="assign" type="button" class="btn btn-primary">
+          Assign Task
+        </button>
+      </div>
+    </div>
+    <hr />
+    <div class="main-container" id="main"></div>
+
+    <div class="footer">&copy; Rahul Sharma</div>
+  </body>
+
+  <script>
+    const log = document.getElementById("loggedin");
+    var logout = document.getElementById("logout");
+    var assign = document.getElementById("assign");
+    if (log.innerText == "Manager") {
+      logout.removeAttribute("disabled");
+    }
+    assign.addEventListener("click", () => {
+      if (log.innerText != "Manager") {
+        alert("You cannot assign task!!!!");
+      } else {
+        window.location.href = "/assign";
+      }
+    });
+
+    var main = document.querySelector("#main");
+
+    var socket = io();
+
+    var data;
+    socket.on("mess", (mes) => {
+      var taskDiv = document.createElement("div");
+      taskDiv.classList.add("tasks");
+
+      if (mes.e == "Not Done") {
+        taskDiv.innerHTML = `
+     
+      <div class="card">
+                <h3 name="title">${mes.a}</h3>
+                <p>${mes.b}</p>
+                <h4>${mes.c}</h2>
+                <h6>${mes.d}</h6>
+                <h3 id="com">${mes.e}</h3>
+                <input type="submit"  class="completed" onClick="myFunction()" value="Confirm If task done :)">
+            </div>
+             `;
+        main.appendChild(taskDiv);
+      } else {
+        taskDiv.innerHTML = `
+        <div class="card">
+                <h3 name="title">${mes.a}</h3>
+                <p>${mes.b}</p>
+                <h4>${mes.c}</h2>
+                <h6>${mes.d}</h6>
+                <h3 id="com">${mes.e}</h3>
+                <input type="submit"  class="completed" onClick="myFunction()" value="Confirm If task done :)">
+            </div>
+             `;
+      }
+
+      data = {
+        a: mes.a,
+        b: mes.b,
+        c: mes.c,
+        d: mes.d,
+        e: "Completed",
+      };
+    });
+
+    function myFunction(event) {
+      socket.emit("message", data);
+      document.querySelector("#com").innerHTML = "Completed";
+    }
+  </script>
+</html>

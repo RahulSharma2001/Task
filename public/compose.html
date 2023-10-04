@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+      integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+      crossorigin="anonymous"
+    ></script>
+    <title>Post</title>
+    <link rel="stylesheet" href="css/compose.css" />
+  </head>
+  <body>
+    <h1>Compose Task</h1>
+
+    <div class="form-group">
+      <label>Title</label>
+      <input class="form-control" id="title" type="text" name="postTitle" />
+      <label>Author</label>
+      <input class="form-control" id="Author" type="text" name="postTitle" />
+      <label>Description</label>
+      <textarea
+        class="form-control"
+        name="postBody"
+        rows="5"
+        cols="30"
+        id="description"
+      ></textarea>
+      <label for="date">Date</label>
+      <input type="date" id="currentDate" />
+      <input type="text" id="complete" value="Not Done" disabled />
+    </div>
+    <button class="btn btn-primary" type="submit" id="submit" name="button">
+      Publish
+    </button>
+  </body>
+  <script>
+    const element = document.getElementById("submit");
+    element.addEventListener("click", function () {
+      var title = document.getElementById("title").value;
+      var author = document.getElementById("Author").value;
+      var desc = document.getElementById("description").value;
+      var date = document.getElementById("currentDate").value;
+      var complete = document.getElementById("complete").value;
+
+      const mes = {
+        a: title,
+        b: author,
+        c: desc,
+        d: date,
+        e: complete,
+      };
+      var socket = io();
+      socket.emit("message", mes);
+      alert("Task Assigned Successfully...:)");
+    });
+  </script>
+</html>
